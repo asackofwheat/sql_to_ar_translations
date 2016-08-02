@@ -73,9 +73,39 @@ FROM posts
 WHERE id IN (3,5,7,9)
 
 CUSTOM TRANSLATIONS
+At least one should use an aggregate function (e.g. COUNT) and at least one should use GROUP.
 
-1. 
+The user with the first name 'Tom' with the most number of posts:
 
-2. 
+1. User.select('COUNT(\*) AS post\_count, user.id, user.full\_name').where(:first_name => 'Tom').joins(:posts).group('user.id, user.full\_name').order('post\_count DESC').limit(1)
 
-3. 
+```sql
+SELECT user.id, user.full\_name, COUNT(*) AS post\_count
+  FROM users JOIN posts ON user.id=posts.author_id
+ WHERE user.first_name='Tom'
+ GROUP BY user.id, user.full\_name
+ ORDER BY post\_count DESC
+ LIMIT 1
+```
+
+The most used category
+
+2. Post.select('COUNT(*) AS category_count, category').group('category').order('category\_count DESC').limit(1)
+
+```sql
+SELECT category, COUNT(*) AS category_count
+  FROM posts
+ GROUP BY category
+ ORDER BY category\_count DESC
+  LIMIT 1
+```
+
+All the users whose first names start with Mike.
+
+3. User.where("first_name LIKE 'Mike%'")
+
+```sql
+SELECT *
+ FROM users
+ WHERE first_name LIKE 'Mike%'
+```
